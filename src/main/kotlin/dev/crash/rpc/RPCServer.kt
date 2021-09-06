@@ -16,16 +16,7 @@ object RPCServer {
                     println(call.request.local.uri)
                     call.respondText(call.request.local.uri)
                 }
-                post("/sendtx") {
-                    val hex = call.request.headers["hex"]
-                    if(hex == null){
-                        call.respond(HttpStatusCode.BadRequest, "No tx hex in header provided")
-                        return@post
-                    }
-                    //TODO: Check valid
-                    //TODO: Push tx
-                    call.respond(HttpStatusCode.OK, "txhash")
-                }
+                post("/sendtx") { sendTx() }
                 post("{...}") {
                     println(call.request.local.uri)
                     call.respondText(call.request.local.uri)

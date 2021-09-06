@@ -7,6 +7,7 @@ import java.util.zip.Inflater
 object Compressor {
     fun compress(data: ByteArray): ByteArray {
         val deflater = Deflater()
+        deflater.setLevel(5)
         deflater.setInput(data)
         val outputStream = ByteArrayOutputStream(data.size)
         deflater.finish()

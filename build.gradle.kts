@@ -20,6 +20,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:1.6.3")
     implementation("org.slf4j:slf4j-api:1.8.0-beta4")
     implementation("org.slf4j:slf4j-simple:1.8.0-beta4")
+    implementation("org.lmdbjava:lmdbjava:0.8.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.30")
 }
 
