@@ -12,7 +12,7 @@ import io.ktor.response.*
 import io.ktor.util.pipeline.*
 
 suspend fun PipelineContext<Unit, ApplicationCall>.sendTx() {
-    val hex = getPostParam("hex") ?: return
+    val hex = getPostParam("hex")?.removePrefix("0x") ?: return
     val bytes = try {
         hex.asHexByteArray()
     }catch (ex: Exception) {
@@ -29,6 +29,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.sendTx() {
         }
         return
     }
-    Mempool.nextBlock.add(transaction)
+    if(!Mempool.addTransaction(transaction)){
+        call.respond(HttpStatusCode.InternalServerError, "Transaction already in next block")
+        return
+    }
     call.respond(HttpStatusCode.OK, transaction.txid)
 }

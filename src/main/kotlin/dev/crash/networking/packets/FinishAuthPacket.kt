@@ -10,7 +10,7 @@ class FinishAuthPacket(val hash: ByteArray) : Packet(PacketType.FINISH_AUTH) {
     override fun createPacket(): BytePacket {
         val packet = BytePacket()
         packet.write(hash.sha256())
-        packet.write(KotlinNode.nodeWallet.address)
+        packet.write(KotlinNode.nodeAddress.address)
         return packet
     }
 }

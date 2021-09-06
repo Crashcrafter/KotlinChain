@@ -8,7 +8,7 @@ import dev.crash.exceptions.ECDSAValidationException
 
 class Transaction(val bytes: ByteArray) {
     val txid = bytes.sha256().sha256().toHexString()
-    val nonce: Long
+    /*val nonce: Long
     val gasPrice: Long
     val outputs: MutableList<TransactionOutput> = mutableListOf()
     val recid: Byte
@@ -33,5 +33,11 @@ class Transaction(val bytes: ByteArray) {
         recid = recIdCalc.toByte()
         r = bytePacket.readByteArray()
         s = bytePacket.readByteArray()
+        validate()
+    }*/
+
+    fun validate(): Boolean {
+        //TODO: Validate transaction
+        return true
     }
 }
