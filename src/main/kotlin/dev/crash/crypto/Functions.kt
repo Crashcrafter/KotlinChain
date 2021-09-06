@@ -83,3 +83,13 @@ fun adjustTo64(s: String): String {
         else -> throw IllegalArgumentException("not a valid key: $s")
     }
 }
+
+//Crypto Functions
+fun validateAddress(address: String): Boolean {
+    if(address.length != 58) return false
+    val bytes = address.asHexByteArray()
+    val hashedPublicKey = bytes.copyOfRange(1, bytes.size-8)
+    val checksum = hashedPublicKey.sha256().sha256()
+    val combined = "01${hashedPublicKey.toHexString()}${checksum.copyOfRange(checksum.size-8, checksum.size).toHexString()}"
+    return combined == address
+}

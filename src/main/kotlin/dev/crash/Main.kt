@@ -2,7 +2,7 @@ package dev.crash
 
 import dev.crash.node.KotlinNode
 import dev.crash.networking.BlockChainServer
-import dev.crash.rpc.RPCServer
+import dev.crash.webserver.RPCServer
 
 suspend fun main(args: Array<String>){
     mainStart()

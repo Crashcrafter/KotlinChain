@@ -1,21 +1,18 @@
-package dev.crash.rpc
+package dev.crash.webserver.rpc
 
 import dev.crash.chain.Transaction
 import dev.crash.crypto.asHexByteArray
 import dev.crash.exceptions.CouldNotReadValueOfTypeException
 import dev.crash.exceptions.ECDSAValidationException
 import dev.crash.node.Mempool
+import dev.crash.webserver.getPostParam
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.util.pipeline.*
 
 suspend fun PipelineContext<Unit, ApplicationCall>.sendTx() {
-    val hex = call.request.headers["hex"]
-    if(hex == null){
-        call.respond(HttpStatusCode.BadRequest, "No tx hex in header provided")
-        return
-    }
+    val hex = getPostParam("hex") ?: return
     val bytes = try {
         hex.asHexByteArray()
     }catch (ex: Exception) {
