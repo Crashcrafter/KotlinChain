@@ -11,7 +11,7 @@ object KotlinNode {
 
     suspend fun start(){
         println("Starting node with wallet ${nodeAddress.address}")
-        if(!chainDir.exists()) chainDir.mkdir()
+        createDirectories()
         while (true) {
             delay(10000)
             if(Mempool.isReadyForNewBlock()){
@@ -36,5 +36,13 @@ object KotlinNode {
                 throw IOException("File ${addressFile.name} could not be created! Stopping node...")
             }
         }
+    }
+
+    private fun createDirectories(){
+        File(chainDir).mkdir()
+        File("$chainDir/blocks").mkdir()
+        File("$chainDir/addresses").mkdir()
+        File("$chainDir/transactions").mkdir()
+        File("$chainDir/contracts").mkdir()
     }
 }
