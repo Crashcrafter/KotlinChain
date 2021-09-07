@@ -2,9 +2,10 @@ package dev.crash.node
 
 import dev.crash.chain.Block
 import dev.crash.chain.Transaction
+import dev.crash.storage.BlockTrie
 
 object Mempool {
-    var currentBlock = Block(listOf(), -1)
+    var currentBlock = Block(listOf(), BlockTrie.lastBlockNumber)
     val onHold = mutableListOf<Transaction>()
 
     fun addTransaction(item: Transaction): Boolean {
@@ -16,20 +17,19 @@ object Mempool {
     }
 
     fun produceNewBlock(){
-        println("Produce new block...")
         val nextTx = mutableListOf<Transaction>()
         nextTx.addAll(onHold)
-        currentBlock = Block(nextTx, getNextBlockNonce())
+        currentBlock = Block(nextTx, getLastBlockNonce()+1)
         onHold.removeAll(nextTx)
-        println("Block number ${currentBlock.blockNonce} created!")
     }
 
-    fun calculateBlock(): Boolean = currentBlock.validate()
+    fun calculateBlock(): Boolean {
+        val result = currentBlock.validate()
+        if(result) BlockTrie.addBlock(currentBlock)
+        return result
+    }
 
     fun isReadyForNewBlock(): Boolean = (currentBlock.isConfirmed || currentBlock.blockNonce < 0) && onHold.isNotEmpty()
 
-    fun getNextBlockNonce(): Long {
-        //TODO: Get next block nonce
-        return 0
-    }
+    fun getLastBlockNonce(): Long = BlockTrie.lastBlockNumber
 }

@@ -1,29 +1,29 @@
 package dev.crash.chain
 
-import dev.crash.crypto.sha256
+import dev.crash.BytePacket
+import dev.crash.crypto.asHexByteArray
+import dev.crash.crypto.sha224
 import dev.crash.crypto.toHexString
-import dev.crash.toByteArray
-import kotlin.random.Random
+import dev.crash.storage.BlockTrie
 
 class Block(val transactions: List<Transaction>, val blockNonce: Long) {
-    private var bytes = byteArrayOf()
     var isConfirmed = false
+    var blockBytes = byteArrayOf()
+    var blockHash = ""
 
     fun validate(): Boolean {
         if(blockNonce < 0) return false
-        //Validate Transactions
+        val bytePacket = BytePacket()
+        bytePacket.write(BlockTrie.lastBlockHash.asHexByteArray())
+        bytePacket.write(transactions.size)
         transactions.forEach {
-            bytes = bytes.plus(it.bytes)
             if(!it.validate()) return false
+            bytePacket.write(it.bytes)
         }
-        //Small PoW
-        var resolution: Long
-        do {
-            resolution = Random.nextLong()
-            val hash = bytes.plus(resolution.toByteArray()).sha256().toHexString()
-            isConfirmed = hash.startsWith("0000")
-        }while (!isConfirmed)
-        println("Block confirmation with number $resolution")
+        blockBytes = bytePacket.toByteArray()
+        blockHash = blockBytes.sha224().toHexString()
+        println("Block $blockNonce ($blockHash) confirmed")
+        isConfirmed = true
         return true
     }
 }

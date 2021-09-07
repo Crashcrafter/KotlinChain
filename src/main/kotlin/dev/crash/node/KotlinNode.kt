@@ -1,6 +1,7 @@
 package dev.crash.node
 
 import dev.crash.chain.Address
+import dev.crash.storage.chainDir
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.delay
 import java.io.File
@@ -10,6 +11,7 @@ object KotlinNode {
 
     suspend fun start(){
         println("Starting node with wallet ${nodeAddress.address}")
+        if(!chainDir.exists()) chainDir.mkdir()
         while (true) {
             delay(10000)
             if(Mempool.isReadyForNewBlock()){
