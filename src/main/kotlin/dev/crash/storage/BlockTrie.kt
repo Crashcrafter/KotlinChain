@@ -2,34 +2,43 @@ package dev.crash.storage
 
 import dev.crash.BytePacket
 import dev.crash.chain.Block
+import dev.crash.crypto.sha224
 import dev.crash.toByteArray
+import dev.crash.toByteArrayMemory
+import org.kodein.memory.io.getBytes
+import java.util.*
 
 object BlockTrie {
-    var lastBlockNumber: Long = getLatestBlockNumber()
-    var lastBlockHash: String = ""
-
-    //Updates after every Block confirmation
+    var lastBlockNonce: Long = -1
+    var lastBlockHash: ByteArray = byteArrayOf()
+    val lastBlocks = Stack<Block>()
 
     fun addBlock(block: Block): Boolean {
-        lastBlockNumber = block.blockNonce
+        lastBlockNonce = block.blockNonce
         lastBlockHash = block.blockHash
+        lastBlocks.push(block)
+        if(lastBlocks.size > 10) lastBlocks.pop()
         val db = getLevelDB("blocks")
-        db.put(block.blockNonce.toByteArray(), block.blockBytes)
-        db.close()
+        db.put(block.blockNonce.toByteArray().toByteArrayMemory(), block.blockBytes.toByteArrayMemory())
         return true
     }
 
-    fun getLatestBlockNumber(): Long {
+    fun loadLastBlocks(){
         val db = getLevelDB("blocks")
-        val iterator = db.iterator()
-        try {
-            iterator.seekToLast()
-        }catch (ex: UnsupportedOperationException){
-            return -1
+        val cursor = db.newCursor()
+        cursor.seekToLast()
+        if(!cursor.isValid()) {
+            cursor.close()
+            return
         }
-        val result = BytePacket(iterator.peekNext().key).readLong()
-        iterator.close()
-        db.close()
-        return result
+        lastBlockNonce = BytePacket(cursor.transientKey().getBytes()).readLong()
+        lastBlockHash = cursor.transientValue().getBytes().sha224()
+        for(i in 0..9) {
+            if(!cursor.isValid()) break
+            lastBlocks.push(Block(cursor.transientValue().getBytes()))
+            cursor.prev()
+        }
+        lastBlocks.reverse()
+        cursor.close()
     }
 }

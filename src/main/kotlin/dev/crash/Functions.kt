@@ -1,5 +1,6 @@
 package dev.crash
 
+import org.kodein.memory.io.ByteArrayMemory
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import kotlin.experimental.or
@@ -47,4 +48,4 @@ fun Long.toByteArray(): ByteArray = byteArrayOf(
     (this ushr 16).toByte(), (this ushr 8).toByte(), this.toByte()
 )
 
-fun ByteArray.toByteBuffer(): ByteBuffer = ByteBuffer.allocate(size).put(this)
+fun ByteArray.toByteArrayMemory(): ByteArrayMemory = ByteArrayMemory(this)

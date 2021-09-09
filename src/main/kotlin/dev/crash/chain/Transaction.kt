@@ -7,7 +7,7 @@ import dev.crash.crypto.toHexString
 import dev.crash.exceptions.ECDSAValidationException
 
 class Transaction(val bytes: ByteArray) {
-    val txid = bytes.sha256().sha256().toHexString()
+    val txid = bytes.sha256().toHexString()
     val nonce: Long
     val gasPrice: Long
     val outputs: MutableList<TransactionOutput> = mutableListOf()

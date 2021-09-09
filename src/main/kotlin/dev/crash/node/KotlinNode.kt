@@ -1,9 +1,12 @@
 package dev.crash.node
 
 import dev.crash.chain.Address
+import dev.crash.storage.BlockTrie
 import dev.crash.storage.chainDir
 import io.ktor.utils.io.errors.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
 
 object KotlinNode {
@@ -12,12 +15,15 @@ object KotlinNode {
     suspend fun start(){
         println("Starting node with wallet ${nodeAddress.address}")
         createDirectories()
-        while (true) {
-            delay(10000)
-            if(Mempool.isReadyForNewBlock()){
-                Mempool.produceNewBlock()
-                if(!Mempool.calculateBlock()) {
-                    println("Invalid block found!")
+        BlockTrie.loadLastBlocks()
+        GlobalScope.launch {
+            while (true) {
+                delay(10)
+                if(Mempool.isReadyForNewBlock()){
+                    Mempool.produceNewBlock()
+                    if(!Mempool.calculateBlock()) {
+                        println("Invalid block found!")
+                    }
                 }
             }
         }
