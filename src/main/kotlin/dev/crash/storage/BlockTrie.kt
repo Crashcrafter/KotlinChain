@@ -41,4 +41,14 @@ object BlockTrie {
         lastBlocks.reverse()
         cursor.close()
     }
+
+    fun getBlock(blockNumber: Long): Block? {
+        val db = getLevelDB("blocks")
+        val cursor = db.newCursor()
+        if(!cursor.isValid()) return null
+        cursor.seekTo(blockNumber.toByteArray().toByteArrayMemory())
+        val result = Block(cursor.transientValue().getBytes())
+        cursor.close()
+        return result
+    }
 }

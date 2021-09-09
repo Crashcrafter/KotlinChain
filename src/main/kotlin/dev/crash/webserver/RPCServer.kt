@@ -1,9 +1,7 @@
 package dev.crash.webserver
 
+import dev.crash.webserver.rpc.*
 import dev.crash.webserver.rpc.getAddress
-import dev.crash.webserver.rpc.getBalance
-import dev.crash.webserver.rpc.getTransaction
-import dev.crash.webserver.rpc.sendTx
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -19,6 +17,7 @@ object RPCServer {
                     get("/getBalance") { getBalance() }
                     get("/getAddress") { getAddress() }
                     get("/getTransaction") { getTransaction() }
+                    get("/getBlock") { getBlock() }
 
                     get("{...}") {
                         println(call.request.local.uri)

@@ -25,7 +25,10 @@ suspend fun PipelineContext<Unit, ApplicationCall>.sendTx() {
         when(ex){
             is ECDSAValidationException -> call.respond(HttpStatusCode.InternalServerError, ex.msg)
             is CouldNotReadValueOfTypeException -> call.respond(HttpStatusCode.InternalServerError, "malformed transaction, wrong structure")
-            else -> call.respond(HttpStatusCode.InternalServerError, "error parsing transaction, is your structure correct?")
+            else -> {
+                ex.printStackTrace()
+                call.respond(HttpStatusCode.InternalServerError, "error parsing transaction, is your structure correct?")
+            }
         }
         return
     }

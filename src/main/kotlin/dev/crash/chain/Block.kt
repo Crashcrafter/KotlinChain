@@ -1,5 +1,6 @@
 package dev.crash.chain
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.crash.BytePacket
 import dev.crash.crypto.sha224
 import dev.crash.crypto.toHexString
@@ -25,9 +26,13 @@ class Block private constructor() {
         bytePacket.readByteArray()
         val amountTx = bytePacket.readVarInt()
         val txs = mutableListOf<String>()
+        val transactions = mutableListOf<Transaction>()
         for (i in 0 until amountTx) {
-            txs.add(bytePacket.readString())
+            val value = bytePacket.readString()
+            txs.add(value)
         }
+        txids = txs
+        this.transactions = transactions
         confirmations = bytePacket.readVarLong()
         isConfirmed = confirmations > 0
     }
@@ -58,4 +63,6 @@ class Block private constructor() {
         isConfirmed = true
         return true
     }
+
+    override fun toString(): String = jacksonObjectMapper().writeValueAsString(this)
 }

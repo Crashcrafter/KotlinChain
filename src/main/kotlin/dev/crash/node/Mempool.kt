@@ -1,7 +1,9 @@
 package dev.crash.node
 
+import dev.crash.chain.Address
 import dev.crash.chain.Block
 import dev.crash.chain.Transaction
+import dev.crash.chain.TransactionOutput
 import dev.crash.storage.BlockTrie
 
 object Mempool {
@@ -21,6 +23,8 @@ object Mempool {
         nextTx.addAll(onHold)
         currentBlock = Block(nextTx, getLastBlockNonce()+1)
         onHold.removeAll(nextTx)
+        val address = Address.generate()
+        address.createTransaction(listOf(TransactionOutput("0x23d4fa575b21ad1dd2db14547a26f24845a8f96843f493569875197d", 1000)))
     }
 
     fun calculateBlock(): Boolean {

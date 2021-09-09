@@ -2,7 +2,7 @@ package dev.crash.node
 
 import dev.crash.chain.Address
 import dev.crash.storage.BlockTrie
-import dev.crash.storage.chainDir
+import dev.crash.storage.createDirectories
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -42,13 +42,5 @@ object KotlinNode {
                 throw IOException("File ${addressFile.name} could not be created! Stopping node...")
             }
         }
-    }
-
-    private fun createDirectories(){
-        File(chainDir).mkdir()
-        File("$chainDir/blocks").mkdir()
-        File("$chainDir/addresses").mkdir()
-        File("$chainDir/transactions").mkdir()
-        File("$chainDir/contracts").mkdir()
     }
 }
