@@ -22,6 +22,8 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.8.0-beta4")
     implementation("org.kodein.db:kodein-leveldb-jvm:0.9.0-beta")
     implementation("org.kodein.db:kodein-leveldb-jni-jvm-windows:0.9.0-beta")
+    implementation("org.kodein.db:kodein-leveldb-jni-jvm-macos:0.9.0-beta")
+    implementation("org.kodein.db:kodein-leveldb-jni-jvm-linux:0.9.0-beta")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.30")
 }
 
