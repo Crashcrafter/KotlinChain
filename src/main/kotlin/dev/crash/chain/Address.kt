@@ -4,13 +4,17 @@ import dev.crash.BytePacket
 import dev.crash.CONFIG
 import dev.crash.crypto.*
 import dev.crash.node.Mempool
+import dev.crash.storage.AddressState
+import dev.crash.storage.AddressStateTrie
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.math.BigInteger
+import java.nio.file.Path
 
 class Address constructor(val publicKey: ByteArray, val address: String, val privateKey: BigInteger) {
-    var nonce: Long = 0
-
     fun saveToFile(path: String) = saveToFile(File(path))
+
+    fun saveToFile(path: Path) = saveToFile(path.toFile())
 
     fun saveToFile(file: File) {
         val bytePacket = BytePacket()
@@ -20,9 +24,14 @@ class Address constructor(val publicKey: ByteArray, val address: String, val pri
         file.writeBytes(bytePacket.toByteArray())
     }
 
+    fun createTransaction(recipient: String, amount: Long, data: ByteArray = byteArrayOf()) = createTransaction(TransactionOutput(recipient, amount, data))
+
+    fun createTransaction(output: TransactionOutput) = createTransaction(listOf(output))
+
     fun createTransaction(outputs: List<TransactionOutput>) {
         val bytePacket = BytePacket()
-        bytePacket.writeAsVarLong(nonce)
+        val state = getState()
+        bytePacket.writeAsVarLong(state.nonce)
         bytePacket.writeAsVarLong(21000)
         bytePacket.writeAsVarInt(outputs.size)
         outputs.forEach {
@@ -43,16 +52,24 @@ class Address constructor(val publicKey: ByteArray, val address: String, val pri
         Mempool.addTransaction(tx)
     }
 
+    fun getState(): AddressState = AddressStateTrie.getAddress(address)
+
     companion object {
         fun generate(): Address {
-            val keyPair = genECDSAKeyPair()
-            val privateKey = keyPair.private.getPrivateKeyBigInt()
-            val publicKey = keyPair.public.getUncompressedPublicKeyBytes()
-            val address = "0x${publicKey.publicKeyToAddress().toHexString()}"
-            return Address(publicKey, address, privateKey)
+            return try {
+                val keyPair = genECDSAKeyPair()
+                val privateKey = keyPair.private.getPrivateKeyBigInt()
+                val publicKey = keyPair.public.getUncompressedPublicKeyBytes()
+                val address = "0x${publicKey.publicKeyToAddress().toHexString()}"
+                Address(publicKey, address, privateKey)
+            }catch (ex: IllegalArgumentException){
+                generate()
+            }
         }
 
         fun fromFile(path: String): Address = fromFile(File(path))
+
+        fun fromFile(path: Path): Address = fromFile(path.toFile())
 
         fun fromFile(file: File): Address {
             val bytes = file.readBytes()

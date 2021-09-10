@@ -91,7 +91,6 @@ fun ByteArray.publicKeyToAddress(): ByteArray {
 
 fun adjustTo64(s: String): String {
     return when (s.length) {
-        61 -> "000$s"
         62 -> "00$s"
         63 -> "0$s"
         64 -> s

@@ -13,14 +13,13 @@ object BlockTrie {
     var lastBlockHash: ByteArray = byteArrayOf()
     val lastBlocks = Stack<Block>()
 
-    fun addBlock(block: Block): Boolean {
+    fun addBlock(block: Block) {
         lastBlockNonce = block.blockNonce
         lastBlockHash = block.blockHash
         lastBlocks.push(block)
         if(lastBlocks.size > 10) lastBlocks.pop()
         val db = getLevelDB("blocks")
         db.put(block.blockNonce.toByteArray().toByteArrayMemory(), block.blockBytes.toByteArrayMemory())
-        return true
     }
 
     fun loadLastBlocks(){
@@ -44,11 +43,9 @@ object BlockTrie {
 
     fun getBlock(blockNumber: Long): Block? {
         val db = getLevelDB("blocks")
-        val cursor = db.newCursor()
-        if(!cursor.isValid()) return null
-        cursor.seekTo(blockNumber.toByteArray().toByteArrayMemory())
-        val result = Block(cursor.transientValue().getBytes())
-        cursor.close()
-        return result
+        val alloc = db.get(blockNumber.toByteArray().toByteArrayMemory()) ?: return null
+        val bytes = alloc.getBytes()
+        alloc.close()
+        return Block(bytes)
     }
 }

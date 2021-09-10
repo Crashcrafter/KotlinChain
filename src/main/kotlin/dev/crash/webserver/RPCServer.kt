@@ -14,9 +14,9 @@ object RPCServer {
         embeddedServer(Netty, port = port) {
             routing {
                 route("/api") {
-                    get("/getBalance") { getBalance() }
-                    get("/getAddress") { getAddress() }
-                    get("/getTransaction") { getTransaction() }
+                    get("/getbalance") { getBalance() }
+                    get("/getaddress") { getAddress() }
+                    get("/gettx") { getTransaction() }
                     get("/getBlock") { getBlock() }
 
                     get("{...}") {

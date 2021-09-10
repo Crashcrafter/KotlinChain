@@ -18,7 +18,7 @@ object KotlinNode {
         BlockTrie.loadLastBlocks()
         GlobalScope.launch {
             while (true) {
-                delay(10)
+                delay(1000)
                 if(Mempool.isReadyForNewBlock()){
                     Mempool.produceNewBlock()
                     if(!Mempool.calculateBlock()) {
