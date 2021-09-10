@@ -47,4 +47,4 @@ fun Long.toByteArray(): ByteArray = byteArrayOf(
     (this ushr 16).toByte(), (this ushr 8).toByte(), this.toByte()
 )
 
-fun ByteArray.toByteArrayMemory(): ByteArrayMemory = ByteArrayMemory(this)
+fun ByteArray.toMemory(): ByteArrayMemory = ByteArrayMemory(this)
