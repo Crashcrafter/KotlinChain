@@ -8,7 +8,7 @@ fun String.toUTF8ByteArray(): ByteArray = toByteArray(Charset.defaultCharset())
 
 fun Short.toByteArray(): ByteArray = byteArrayOf((this.toInt() ushr 8).toByte(), this.toByte())
 
-fun Int.toByteArrayAsVarInt(): ByteArray {
+fun Int.toByteListAsVarInt(): List<Byte> {
     var bvalue = this
     val result = mutableListOf<Byte>()
     do {
@@ -19,15 +19,17 @@ fun Int.toByteArrayAsVarInt(): ByteArray {
         }
         result.add(temp)
     } while (bvalue != 0)
-    return result.toByteArray()
+    return result
 }
+
+fun Int.toByteArrayAsVarInt(): ByteArray = toByteListAsVarInt().toByteArray()
 
 fun Int.toByteArray(): ByteArray = byteArrayOf(
     (this ushr 24).toByte(), (this ushr 16).toByte(),
     (this ushr 8).toByte(), this.toByte()
 )
 
-fun Long.toByteArrayAsVarLong(): ByteArray {
+fun Long.toByteListAsVarLong(): List<Byte> {
     var bvalue = this
     val result = mutableListOf<Byte>()
     do {
@@ -38,8 +40,10 @@ fun Long.toByteArrayAsVarLong(): ByteArray {
         }
         result.add(temp)
     } while (bvalue != 0L)
-    return result.toByteArray()
+    return result
 }
+
+fun Long.toByteArrayAsVarLong(): ByteArray = toByteListAsVarLong().toByteArray()
 
 fun Long.toByteArray(): ByteArray = byteArrayOf(
     (this ushr 56).toByte(), (this ushr 48).toByte(),

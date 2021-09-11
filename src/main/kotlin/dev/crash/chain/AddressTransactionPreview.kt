@@ -1,8 +1,7 @@
-package dev.crash.storage
+package dev.crash.chain
 
 data class AddressTransactionPreview(
     val txid: String,
     val amount: Long,
-    val sent: Boolean,
-    val otherAddress: String
+    val otherAddresses: List<String>
 )

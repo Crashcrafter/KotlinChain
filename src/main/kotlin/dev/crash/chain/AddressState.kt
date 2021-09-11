@@ -1,4 +1,4 @@
-package dev.crash.storage
+package dev.crash.chain
 
 import dev.crash.BytePacket
 
@@ -15,9 +15,8 @@ class AddressState(bytes: ByteArray, val address: String) {
         for (i in 0 until length){
             val txid = bytePacket.readString()
             val amount = bytePacket.readVarLong()
-            val sent = bytePacket.readBoolean()
-            val otherAddress = bytePacket.readString()
-            transactions.add(AddressTransactionPreview(txid, amount, sent, otherAddress))
+            val otherAddresses = bytePacket.readStrings()
+            transactions.add(AddressTransactionPreview(txid, amount, otherAddresses))
         }
     }
 
@@ -29,8 +28,7 @@ class AddressState(bytes: ByteArray, val address: String) {
         transactions.forEach {
             bytePacket.write(it.txid)
             bytePacket.writeAsVarLong(it.amount)
-            bytePacket.write(it.sent)
-            bytePacket.write(it.otherAddress)
+            bytePacket.write(it.otherAddresses)
         }
         return bytePacket.toByteArray()
     }

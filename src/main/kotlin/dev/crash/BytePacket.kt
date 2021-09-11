@@ -33,11 +33,11 @@ class BytePacket() {
     }
 
     fun writeAsVarInt(value: Int) {
-        byteBuffer.addAll(value.toByteArrayAsVarInt().asList())
+        byteBuffer.addAll(value.toByteListAsVarInt())
     }
 
     fun writeAsVarLong(value: Long) {
-        byteBuffer.addAll(value.toByteArrayAsVarLong().asList())
+        byteBuffer.addAll(value.toByteListAsVarLong())
     }
 
     fun write(value: Int) {
@@ -65,6 +65,13 @@ class BytePacket() {
         val bytes = value.toByteArray().asList()
         writeAsVarInt(bytes.size)
         byteBuffer.addAll(bytes)
+    }
+
+    fun write(value: List<String>) {
+        writeAsVarInt(value.size)
+        value.forEach {
+            write(it)
+        }
     }
     //endregion
 
@@ -194,6 +201,15 @@ class BytePacket() {
     fun readBigInt(): BigInteger {
         val bytes = readByteArray()
         return BigInteger(bytes)
+    }
+
+    fun readStrings(): List<String> {
+        val size = readVarInt()
+        val result = mutableListOf<String>()
+        for (i in 0 until size){
+            result.add(readString())
+        }
+        return result
     }
     //endregion
 

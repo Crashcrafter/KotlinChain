@@ -17,7 +17,7 @@ object BlockTrie {
         lastBlockNonce = block.blockNonce
         lastBlockHash = block.blockHash
         lastBlocks.push(block)
-        if(lastBlocks.size > 100) lastBlocks.pop()
+        if(lastBlocks.size > 25) lastBlocks.pop()
         val db = getLevelDB("blocks")
         db.put(block.blockNonce.toByteArrayAsVarLong().toMemory(), block.blockBytes.toMemory())
         TransactionTrie.addTransactions(block.transactions)
@@ -33,7 +33,7 @@ object BlockTrie {
         }
         lastBlockNonce = BytePacket(cursor.transientKey().getBytes()).readVarLong()
         lastBlockHash = cursor.transientValue().getBytes().sha224()
-        for(i in 0..99) {
+        for(i in 0 until 25) {
             if(!cursor.isValid()) break
             lastBlocks.push(Block(cursor.transientValue().getBytes()))
             cursor.prev()

@@ -13,14 +13,14 @@ object TransactionTrie {
         lastTxs.push(transaction)
         if(lastTxs.size > 100) lastTxs.pop()
         val db = getLevelDB("transactions")
-        db.put(transaction.txid.asHexByteArray().toMemory(), transaction.bytes.toMemory())
+        db.put(transaction.txid.asHexByteArray().toMemory(), transaction.getDBBytes().toMemory())
     }
 
     fun addTransactions(transactions: List<Transaction>) {
         val db = getLevelDB("transactions")
         val batch = db.newWriteBatch()
         transactions.forEach {
-            batch.put(it.txid.asHexByteArray().toMemory(), it.bytes.toMemory())
+            batch.put(it.txid.asHexByteArray().toMemory(), it.getDBBytes().toMemory())
         }
         db.write(batch)
         batch.close()

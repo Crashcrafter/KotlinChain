@@ -2,8 +2,7 @@ package dev.crash.webserver.rpc
 
 import dev.crash.chain.Transaction
 import dev.crash.crypto.asHexByteArray
-import dev.crash.exceptions.CouldNotReadValueOfTypeException
-import dev.crash.exceptions.ECDSAValidationException
+import dev.crash.exceptions.*
 import dev.crash.node.Mempool
 import dev.crash.webserver.getPostParam
 import io.ktor.application.*
@@ -24,7 +23,10 @@ suspend fun PipelineContext<Unit, ApplicationCall>.sendTx() {
     }catch (ex: Exception) {
         when(ex){
             is ECDSAValidationException -> call.respond(HttpStatusCode.InternalServerError, ex.msg)
-            is CouldNotReadValueOfTypeException -> call.respond(HttpStatusCode.InternalServerError, "malformed transaction, wrong structure")
+            is CouldNotReadValueOfTypeException -> call.respond(HttpStatusCode.BadRequest, "malformed transaction, wrong structure")
+            is InvalidAddressException -> call.respond(HttpStatusCode.BadRequest, "invalid address")
+            is NonceException -> call.respond(HttpStatusCode.BadRequest, "invalid nonce")
+            is InsufficientBalanceException -> call.respond(HttpStatusCode.InternalServerError, "insufficient balance for gasPrice*size + value")
             else -> {
                 ex.printStackTrace()
                 call.respond(HttpStatusCode.InternalServerError, "error parsing transaction, is your structure correct?")

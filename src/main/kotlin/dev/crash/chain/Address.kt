@@ -4,7 +4,6 @@ import dev.crash.BytePacket
 import dev.crash.CONFIG
 import dev.crash.crypto.*
 import dev.crash.node.Mempool
-import dev.crash.storage.AddressState
 import dev.crash.storage.AddressStateTrie
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -24,15 +23,16 @@ class Address constructor(val publicKey: ByteArray, val address: String, val pri
         file.writeBytes(bytePacket.toByteArray())
     }
 
-    fun createTransaction(recipient: String, amount: Long, data: ByteArray = byteArrayOf()) = createTransaction(TransactionOutput(recipient, amount, data))
+    fun createTransaction(recipient: String, amount: Long, data: ByteArray = byteArrayOf(), gasPrice: Long = 10) =
+        createTransaction(TransactionOutput(recipient, amount, data), gasPrice)
 
-    fun createTransaction(output: TransactionOutput) = createTransaction(listOf(output))
+    fun createTransaction(output: TransactionOutput, gasPrice: Long = 10) = createTransaction(listOf(output), gasPrice)
 
-    fun createTransaction(outputs: List<TransactionOutput>) {
+    fun createTransaction(outputs: List<TransactionOutput>, gasPrice: Long = 10) {
         val bytePacket = BytePacket()
         val state = getState()
         bytePacket.writeAsVarLong(state.nonce)
-        bytePacket.writeAsVarLong(21000)
+        bytePacket.writeAsVarLong(gasPrice)
         bytePacket.writeAsVarInt(outputs.size)
         outputs.forEach {
             bytePacket.write(it.recipient.removePrefix("0x"))
@@ -45,10 +45,6 @@ class Address constructor(val publicKey: ByteArray, val address: String, val pri
         bytePacket.write(sig.r.toByteArray())
         bytePacket.write(sig.s.toByteArray())
         val tx = Transaction(bytePacket.toByteArray())
-        if(!tx.validate(false)) {
-            println("Invalid transaction")
-            return
-        }
         Mempool.addTransaction(tx)
     }
 

@@ -100,11 +100,11 @@ fun adjustTo64(s: String): String {
 
 //Crypto Functions
 fun validateAddress(address: String): Boolean {
-    if(address.length != 58) return false
+    if(address.length != 56) return false
     val bytes = address.asHexByteArray()
     val hashedPublicKey = bytes.copyOfRange(0, bytes.size-8)
     val checksum = hashedPublicKey.sha256().sha256()
-    val combined = "01${hashedPublicKey.toHexString()}${checksum.copyOfRange(checksum.size-8, checksum.size).toHexString()}"
+    val combined = "${hashedPublicKey.toHexString()}${checksum.copyOfRange(checksum.size-8, checksum.size).toHexString()}"
     return combined == address
 }
 
