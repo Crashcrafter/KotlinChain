@@ -33,11 +33,11 @@ class BytePacket() {
     }
 
     fun writeAsVarInt(value: Int) {
-        byteBuffer.addAll(value.toByteArrayAsVarInt())
+        byteBuffer.addAll(value.toByteArrayAsVarInt().asList())
     }
 
     fun writeAsVarLong(value: Long) {
-        byteBuffer.addAll(value.toByteArrayAsVarLong())
+        byteBuffer.addAll(value.toByteArrayAsVarLong().asList())
     }
 
     fun write(value: Int) {

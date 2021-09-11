@@ -5,20 +5,18 @@ import dev.crash.storage.BlockTrie
 import dev.crash.storage.createDirectories
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
 object KotlinNode {
     lateinit var nodeAddress: Address
 
-    suspend fun start(){
+    fun start(){
         println("Starting node with wallet ${nodeAddress.address}")
         createDirectories()
         BlockTrie.loadLastBlocks()
         GlobalScope.launch {
             while (true) {
-                delay(1000)
                 if(Mempool.isReadyForNewBlock()){
                     Mempool.produceNewBlock()
                     if(!Mempool.calculateBlock()) {

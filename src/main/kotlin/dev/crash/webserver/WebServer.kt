@@ -18,7 +18,7 @@ object WebServer {
                     get("/getbalance") { getBalance() }
                     get("/getaddress") { getAddress() }
                     get("/gettx") { getTransaction() }
-                    get("/getBlock") { getBlock() }
+                    get("/getblock") { getBlock() }
 
                     get("{...}") {
                         println(call.request.local.uri)

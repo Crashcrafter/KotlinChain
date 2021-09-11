@@ -3,7 +3,7 @@ package dev.crash.storage
 import dev.crash.BytePacket
 import dev.crash.chain.Block
 import dev.crash.crypto.sha224
-import dev.crash.toByteArray
+import dev.crash.toByteArrayAsVarLong
 import dev.crash.toMemory
 import org.kodein.memory.io.getBytes
 import java.util.*
@@ -19,7 +19,8 @@ object BlockTrie {
         lastBlocks.push(block)
         if(lastBlocks.size > 100) lastBlocks.pop()
         val db = getLevelDB("blocks")
-        db.put(block.blockNonce.toByteArray().toMemory(), block.blockBytes.toMemory())
+        db.put(block.blockNonce.toByteArrayAsVarLong().toMemory(), block.blockBytes.toMemory())
+        TransactionTrie.addTransactions(block.transactions)
     }
 
     fun loadLastBlocks(){
@@ -30,7 +31,7 @@ object BlockTrie {
             cursor.close()
             return
         }
-        lastBlockNonce = BytePacket(cursor.transientKey().getBytes()).readLong()
+        lastBlockNonce = BytePacket(cursor.transientKey().getBytes()).readVarLong()
         lastBlockHash = cursor.transientValue().getBytes().sha224()
         for(i in 0..99) {
             if(!cursor.isValid()) break
@@ -43,7 +44,7 @@ object BlockTrie {
 
     fun getBlock(blockNumber: Long): Block? {
         val db = getLevelDB("blocks")
-        val alloc = db.get(blockNumber.toByteArray().toMemory()) ?: return null
+        val alloc = db.get(blockNumber.toByteArrayAsVarLong().toMemory()) ?: return null
         val bytes = alloc.getBytes()
         alloc.close()
         return Block(bytes)

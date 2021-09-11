@@ -5,5 +5,5 @@ import io.ktor.application.*
 import io.ktor.util.pipeline.*
 
 suspend fun PipelineContext<Unit, ApplicationCall>.blockPage() {
-    val blockNonce = getGetParam("block")?.toLong() ?: 0
+    val blockNonce = getGetParam("block")?.toLong() ?: -1
 }

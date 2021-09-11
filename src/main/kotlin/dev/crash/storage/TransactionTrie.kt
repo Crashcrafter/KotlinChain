@@ -16,6 +16,16 @@ object TransactionTrie {
         db.put(transaction.txid.asHexByteArray().toMemory(), transaction.bytes.toMemory())
     }
 
+    fun addTransactions(transactions: List<Transaction>) {
+        val db = getLevelDB("transactions")
+        val batch = db.newWriteBatch()
+        transactions.forEach {
+            batch.put(it.txid.asHexByteArray().toMemory(), it.bytes.toMemory())
+        }
+        db.write(batch)
+        batch.close()
+    }
+
     fun getTransaction(txHash: String): Transaction? {
         val db = getLevelDB("transactions")
         val alloc = db.get(txHash.asHexByteArray().toMemory()) ?: return null

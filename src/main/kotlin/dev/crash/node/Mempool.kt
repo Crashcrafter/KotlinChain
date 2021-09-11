@@ -23,8 +23,10 @@ object Mempool {
         nextTx.addAll(onHold)
         currentBlock = Block(nextTx, getLastBlockNonce()+1)
         onHold.removeAll(nextTx)
-        val address = Address.generate()
-        address.createTransaction(listOf(TransactionOutput("0x23d4fa575b21ad1dd2db14547a26f24845a8f96843f493569875197d", 1000)))
+        for(i in 0..100) {
+            val address = Address.generate()
+            address.createTransaction(TransactionOutput("0x23d4fa575b21ad1dd2db14547a26f24845a8f96843f493569875197d", 1000))
+        }
     }
 
     fun calculateBlock(): Boolean {
