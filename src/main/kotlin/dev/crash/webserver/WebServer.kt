@@ -4,6 +4,7 @@ import dev.crash.webserver.explorer.*
 import dev.crash.webserver.rpc.*
 import dev.crash.webserver.rpc.getAddress
 import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
@@ -15,22 +16,19 @@ object WebServer {
         embeddedServer(Netty, port = port) {
             routing {
                 route("/api") {
-                    get("/getbalance") { getBalance() }
-                    get("/getaddress") { getAddress() }
-                    get("/gettx") { getTransaction() }
-                    get("/getblock") { getBlock() }
+                    get("/getBalance") { getBalance() }
+                    get("/getAddress") { getAddress() }
+                    get("/getTx") { getTransaction() }
+                    get("/getBlock") { getBlock() }
+                    get("/blocks") { getLastBlocks() }
+                    get("/txs") { getLastTxs() }
+                    get("/doc") { call.respondRedirect("https://github.com/Cr4shdev/KotlinChain/wiki/Rest-API") }
 
-                    get("{...}") {
-                        println(call.request.local.uri)
-                        call.respondText(call.request.local.uri)
-                    }
+                    get("{...}") { call.respond(HttpStatusCode.NotFound, call.request.local.uri) }
 
-                    post("/sendtx") { sendTx() }
+                    post("/sendTx") { sendTx() }
 
-                    post("{...}") {
-                        println(call.request.local.uri)
-                        call.respondText(call.request.local.uri)
-                    }
+                    post("{...}") { call.respond(HttpStatusCode.NotFound, call.request.local.uri) }
                 }
                 get("/") { mainPage() }
                 get("/block") { blockPage() }

@@ -2,7 +2,6 @@ package dev.crash.node
 
 import dev.crash.chain.Address
 import dev.crash.storage.BlockTrie
-import dev.crash.storage.createDirectories
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -13,7 +12,6 @@ object KotlinNode {
 
     fun start(){
         println("Starting node with wallet ${nodeAddress.address}")
-        createDirectories()
         BlockTrie.loadLastBlocks()
         GlobalScope.launch {
             while (true) {

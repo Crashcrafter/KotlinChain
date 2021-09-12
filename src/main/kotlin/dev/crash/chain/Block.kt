@@ -19,7 +19,7 @@ class Block private constructor() {
     }
 
     //Constructor for DBBytes
-    constructor(bytes: ByteArray) : this() {
+    constructor(bytes: ByteArray, buildTxs: Boolean = false) : this() {
         blockBytes = bytes
         blockHash = blockBytes.sha224()
         val bytePacket = BytePacket(bytes)
@@ -31,7 +31,7 @@ class Block private constructor() {
         for (i in 0 until amountTx) {
             val value = bytePacket.readString()
             txids.add(value)
-            transactions.add(Transaction.fromTxHash(value)!!)
+            if(buildTxs) transactions.add(Transaction.fromTxId(value)!!)
         }
         this.txids = txids
         this.transactions = transactions
@@ -54,7 +54,7 @@ class Block private constructor() {
         bytePacket.write(BlockTrie.lastBlockHash)
         bytePacket.writeAsVarInt(transactions.size)
         transactions.forEach {
-            if(!it.validate()) return false
+            if(!it.validate(blockNonce)) return false
             bytePacket.write(it.txid)
         }
         confirmations++
@@ -73,7 +73,9 @@ class Block private constructor() {
         val txids: List<String>
     )
 
+    fun getJsonObj(): JsonObj = JsonObj(blockHash.toHexString(), blockNonce, confirmations, txids)
+
     override fun toString(): String {
-        return jacksonObjectMapper().writeValueAsString(JsonObj(blockHash.toHexString(), blockNonce, confirmations, txids))
+        return jacksonObjectMapper().writeValueAsString(getJsonObj())
     }
 }

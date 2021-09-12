@@ -10,6 +10,7 @@ private val dbs = hashMapOf<String, LevelDB>()
 fun getLevelDB(table: String): LevelDB = dbs[table] ?: openDB(table)
 
 private fun openDB(name: String): LevelDB {
+    File("$chainDir/$name").mkdirs()
     val db = LevelDBJvm.open("$chainDir/$name")
     dbs[name] = db
     return db
@@ -19,12 +20,4 @@ fun saveDBs() {
     dbs.values.forEach {
         it.close()
     }
-}
-
-fun createDirectories(){
-    File(chainDir).mkdir()
-    File("$chainDir/blocks").mkdir()
-    File("$chainDir/addresses").mkdir()
-    File("$chainDir/transactions").mkdir()
-    File("$chainDir/contracts").mkdir()
 }

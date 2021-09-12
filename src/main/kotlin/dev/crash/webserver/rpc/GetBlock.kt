@@ -12,7 +12,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.getBlock(){
     val block = BlockTrie.getBlock(blockNonce)
     if(block == null){
         call.respond(HttpStatusCode.BadRequest, "Block not found")
-        return
+    }else {
+        call.respond(HttpStatusCode.OK, block.toString())
     }
-    call.respond(HttpStatusCode.OK, block.toString())
 }

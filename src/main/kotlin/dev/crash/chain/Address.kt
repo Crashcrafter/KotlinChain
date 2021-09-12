@@ -4,7 +4,7 @@ import dev.crash.BytePacket
 import dev.crash.CONFIG
 import dev.crash.crypto.*
 import dev.crash.node.Mempool
-import dev.crash.storage.AddressStateTrie
+import dev.crash.storage.AddressTrie
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.math.BigInteger
@@ -48,7 +48,7 @@ class Address constructor(val publicKey: ByteArray, val address: String, val pri
         Mempool.addTransaction(tx)
     }
 
-    fun getState(): AddressState = AddressStateTrie.getAddress(address)
+    fun getState(): AddressState = AddressTrie.getAddress(address)
 
     companion object {
         fun generate(): Address {
