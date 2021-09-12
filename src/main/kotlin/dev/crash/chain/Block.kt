@@ -26,15 +26,15 @@ class Block private constructor() {
         blockNonce = bytePacket.readVarLong() + 1
         bytePacket.readByteArray()
         val amountTx = bytePacket.readVarInt()
-        val txids = mutableListOf<String>()
-        val transactions = mutableListOf<Transaction>()
-        for (i in 0 until amountTx) {
-            val value = bytePacket.readString()
-            txids.add(value)
-            if(buildTxs) transactions.add(Transaction.fromTxId(value)!!)
+        this.txids = bytePacket.readStrings()
+        if(buildTxs) {
+            val transactions = mutableListOf<Transaction>()
+            for (i in 0 until amountTx) {
+                val value = bytePacket.readString()
+                transactions.add(Transaction.fromTxId(value)!!)
+            }
+            this.transactions = transactions
         }
-        this.txids = txids
-        this.transactions = transactions
         confirmations = bytePacket.readVarLong()
         isConfirmed = confirmations > 0
     }
@@ -52,11 +52,12 @@ class Block private constructor() {
         val bytePacket = BytePacket()
         bytePacket.writeAsVarLong(BlockTrie.lastBlockNonce)
         bytePacket.write(BlockTrie.lastBlockHash)
-        bytePacket.writeAsVarInt(transactions.size)
+        val txids = mutableListOf<String>()
         transactions.forEach {
             if(!it.validate(blockNonce)) return false
-            bytePacket.write(it.txid)
+            txids.add(it.txid)
         }
+        bytePacket.write(txids)
         confirmations++
         bytePacket.writeAsVarLong(confirmations)
         blockBytes = bytePacket.toByteArray()

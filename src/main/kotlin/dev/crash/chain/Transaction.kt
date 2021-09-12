@@ -94,7 +94,6 @@ class Transaction private constructor() {
         state.transactions.add(AddressTransactionPreview(txid, totalOut, recipients))
         Mempool.tempAddressState[from] = state
         confirmations++
-        //TODO: Update Transaction State
         return true
     }
 

@@ -10,5 +10,5 @@ import io.ktor.util.pipeline.*
 suspend fun PipelineContext<Unit, ApplicationCall>.getBalance(){
     val address = getAddress() ?: return
     val addressState = AddressTrie.getAddress(address)
-    call.respond(HttpStatusCode.OK, addressState.balance)
+    call.respond(HttpStatusCode.OK, addressState.balance.toString())
 }
