@@ -4,9 +4,10 @@ import dev.crash.BytePacket
 import dev.crash.networking.p2p.P2PChannel
 import dev.crash.networking.packethandler.AuthenticationPacketHandler
 import dev.crash.networking.packethandler.FinishAuthPacketHandler
+import dev.crash.networking.packethandler.SharePeersPacketHandler
 
 object PacketManager {
-    val packets: HashMap<Int, PacketHandler> = hashMapOf(0 to AuthenticationPacketHandler(), 1 to FinishAuthPacketHandler())
+    val packets: HashMap<Int, PacketHandler> = hashMapOf(0 to AuthenticationPacketHandler(), 1 to FinishAuthPacketHandler(), 2 to SharePeersPacketHandler())
     val authCodes: HashMap<P2PChannel, ByteArray> = hashMapOf()
 
     fun handlePacket(channel: P2PChannel, bytes: ByteArray) {

@@ -1,6 +1,7 @@
 package dev.crash.networking
 
 import dev.crash.BytePacket
+import dev.crash.node.KotlinNode
 import java.io.File
 
 object PeerHandler {
@@ -10,7 +11,7 @@ object PeerHandler {
     fun loadPeers() {
         if(!file.exists()) {
             file.createNewFile()
-            save()
+            addPeer("127.0.0.1", 8334, KotlinNode.nodeAddress.address, 1)
             return
         }
         val packet = BytePacket(file.readBytes())
@@ -22,30 +23,19 @@ object PeerHandler {
             val chainId = packet.readVarInt()
             var exists = false
             peers.forEach {
-                if(ip == it.ip && chainId != it.chainId) {
+                if(hasPeer(it)) {
                     exists = true
                     return@forEach
                 }
             }
             if(!exists) peers.add(Peer(ip, port, address, chainId))
-            save()
         }
+        save()
     }
 
     fun addPeer(peer: Peer) {
-        val toRemove = mutableListOf<Peer>()
-        peers.forEach {
-            if(it.nodeAddress == peer.nodeAddress) {
-                if(it.ip == peer.ip){
-                    return
-                }else {
-                    toRemove.add(it)
-                }
-            }
-        }
-        peers.add(peer)
-        toRemove.forEach {
-            peers.remove(it)
+        if(!hasPeer(peer)) {
+            peers.add(peer)
         }
         save()
     }
@@ -54,7 +44,7 @@ object PeerHandler {
 
     fun hasPeer(peer: Peer): Boolean {
         peers.forEach {
-            if(it.ip == peer.ip && it.port == peer.port && it.nodeAddress == peer.nodeAddress && it.chainId == peer.chainId) return true
+            if(it.ip == peer.ip && it.nodeAddress == peer.nodeAddress && it.chainId == peer.chainId) return true
         }
         return false
     }
@@ -66,6 +56,7 @@ object PeerHandler {
             packet.write(it.ip)
             packet.writeAsVarInt(it.port)
             packet.write(it.nodeAddress)
+            packet.writeAsVarInt(it.chainId)
         }
         file.writeBytes(packet.toByteArray())
     }
