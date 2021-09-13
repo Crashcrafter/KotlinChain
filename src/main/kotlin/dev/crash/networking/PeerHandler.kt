@@ -1,6 +1,7 @@
 package dev.crash.networking
 
 import dev.crash.BytePacket
+import dev.crash.CONFIG
 import dev.crash.node.KotlinNode
 import java.io.File
 
@@ -11,7 +12,7 @@ object PeerHandler {
     fun loadPeers() {
         if(!file.exists()) {
             file.createNewFile()
-            addPeer("127.0.0.1", 8334, KotlinNode.nodeAddress.address, 1)
+            addPeer("127.0.0.1", CONFIG.BLOCKCHAINSERVERPORT, KotlinNode.nodeAddress.address, CONFIG.CHAINID)
             return
         }
         val packet = BytePacket(file.readBytes())
