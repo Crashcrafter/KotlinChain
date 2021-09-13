@@ -12,7 +12,7 @@ object TransactionTrie : Trie("transactions") {
     fun addTransaction(transaction: Transaction) {
         lastTxs.addFirst(transaction)
         if(lastTxs.size > 100) lastTxs.removeLast()
-        db.put(transaction.txid.asHexByteArray().toMemory(), transaction.getDBBytes().toMemory())
+        db.put(transaction.txid.toMemory(), transaction.getDBBytes().toMemory())
     }
 
     fun addTransactions(transactions: List<Transaction>) {
@@ -20,7 +20,7 @@ object TransactionTrie : Trie("transactions") {
         transactions.forEach {
             lastTxs.addFirst(it)
             if(lastTxs.size > 100) lastTxs.removeLast()
-            batch.put(it.txid.asHexByteArray().toMemory(), it.getDBBytes().toMemory())
+            batch.put(it.txid.toMemory(), it.getDBBytes().toMemory())
         }
         db.write(batch)
         batch.close()

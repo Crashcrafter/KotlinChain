@@ -27,6 +27,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.sendTx() {
             is InvalidAddressException -> call.respond(HttpStatusCode.BadRequest, "invalid address")
             is NonceException -> call.respond(HttpStatusCode.BadRequest, "invalid nonce")
             is InsufficientBalanceException -> call.respond(HttpStatusCode.InternalServerError, "insufficient balance for gasPrice*size + value")
+            is TransactionOutputException -> call.respond(HttpStatusCode.BadRequest, ex.msg)
             else -> {
                 ex.printStackTrace()
                 call.respond(HttpStatusCode.InternalServerError, "error parsing transaction, is your structure correct?")

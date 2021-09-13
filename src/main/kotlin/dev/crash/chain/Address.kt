@@ -35,7 +35,7 @@ class Address constructor(val publicKey: ByteArray, val address: String, val pri
         bytePacket.writeAsVarLong(gasPrice)
         bytePacket.writeAsVarInt(outputs.size)
         outputs.forEach {
-            bytePacket.write(it.recipient.removePrefix("0x"))
+            bytePacket.write(it.recipient)
             bytePacket.writeAsVarLong(it.amount)
             bytePacket.write(it.data)
         }

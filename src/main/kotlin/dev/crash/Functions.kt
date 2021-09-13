@@ -1,5 +1,7 @@
 package dev.crash
 
+import dev.crash.crypto.asHexByteArray
+import dev.crash.crypto.toHexString
 import org.kodein.memory.io.ByteArrayMemory
 import java.nio.charset.Charset
 import kotlin.experimental.or
@@ -52,3 +54,19 @@ fun Long.toByteArray(): ByteArray = byteArrayOf(
 )
 
 fun ByteArray.toMemory(): ByteArrayMemory = ByteArrayMemory(this)
+
+fun List<ByteArray>.toHexStringList(): List<String> {
+    val result = mutableListOf<String>()
+    forEach {
+        result.add(it.toHexString())
+    }
+    return result
+}
+
+fun List<String>.toHexByteArrayList(): List<ByteArray> {
+    val result = mutableListOf<ByteArray>()
+    forEach {
+        result.add(it.asHexByteArray())
+    }
+    return result
+}

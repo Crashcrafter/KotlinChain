@@ -2,25 +2,21 @@ package dev.crash.chain
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.crash.BytePacket
+import dev.crash.crypto.toHexString
+import dev.crash.toHexStringList
 
-class AddressState(bytes: ByteArray, val address: String) {
+class AddressState(bytes: ByteArray, val address: ByteArray) {
     var nonce: Long
     var balance: Long
     var data: ByteArray
-    val transactions = mutableListOf<AddressTransactionPreview>()
+    val txids = mutableListOf<ByteArray>()
 
     init {
         val bytePacket = BytePacket(bytes)
         nonce = bytePacket.readVarLong()
         balance = bytePacket.readVarLong()
         data = bytePacket.readByteArray()
-        val length = bytePacket.readVarInt()
-        for (i in 0 until length){
-            val txid = bytePacket.readString()
-            val amount = bytePacket.readVarLong()
-            val otherAddresses = bytePacket.readStrings()
-            transactions.add(AddressTransactionPreview(txid, amount, otherAddresses))
-        }
+        txids.addAll(bytePacket.readByteArrays())
     }
 
     fun toByteArray(): ByteArray {
@@ -28,12 +24,7 @@ class AddressState(bytes: ByteArray, val address: String) {
         bytePacket.writeAsVarLong(nonce)
         bytePacket.writeAsVarLong(balance)
         bytePacket.write(data)
-        bytePacket.writeAsVarInt(transactions.size)
-        transactions.forEach {
-            bytePacket.write(it.txid)
-            bytePacket.writeAsVarLong(it.amount)
-            bytePacket.write(it.otherAddresses)
-        }
+        bytePacket.write(txids)
         return bytePacket.toByteArray()
     }
 
@@ -41,15 +32,15 @@ class AddressState(bytes: ByteArray, val address: String) {
         val address: String,
         val balance: Long,
         val nonce: Long,
-        val transactions: List<AddressTransactionPreview>
+        val transactions: List<String>
     )
 
     override fun toString(): String {
-        return jacksonObjectMapper().writeValueAsString(JsonObj(address, balance, nonce, transactions))
+        return jacksonObjectMapper().writeValueAsString(JsonObj(address.toHexString(), balance, nonce, txids.toHexStringList()))
     }
 
     companion object {
-        fun getDefault(address: String): AddressState {
+        fun getDefault(address: ByteArray): AddressState {
             val bytePacket = BytePacket()
             bytePacket.writeAsVarLong(0) // Nonce
             bytePacket.writeAsVarLong(0) // Balance

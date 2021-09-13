@@ -1,8 +1,10 @@
 import dev.crash.chain.Address
 import dev.crash.chain.TransactionOutput
+import kotlin.random.Random
+import kotlin.random.nextLong
 
-suspend fun main(){
+fun main(){
     val address = Address.generate()
-    address.createTransaction(TransactionOutput("23d4fa575b21ad1dd2db14547a26f24845a8f96843f493569875197d", 1000))
+    address.createTransaction(TransactionOutput("ea1cd0569aa4dcd90f0103219420317d051e55663f488df3", Random.nextLong(0..Long.MAX_VALUE)))
     dev.crash.mainStart()
 }

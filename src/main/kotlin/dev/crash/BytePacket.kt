@@ -67,10 +67,19 @@ class BytePacket() {
         byteBuffer.addAll(bytes)
     }
 
-    fun write(value: List<String>) {
+    fun write(value: List<ByteArray>) {
         writeAsVarInt(value.size)
         value.forEach {
             write(it)
+        }
+    }
+
+    fun write(value: HashMap<String, Long>) {
+        val size = value.size
+        writeAsVarInt(size)
+        value.forEach {
+            write(it.key)
+            writeAsVarLong(it.value)
         }
     }
     //endregion
@@ -203,11 +212,22 @@ class BytePacket() {
         return BigInteger(bytes)
     }
 
-    fun readStrings(): List<String> {
+    fun readByteArrays(): List<ByteArray> {
         val size = readVarInt()
-        val result = mutableListOf<String>()
+        val result = mutableListOf<ByteArray>()
         for (i in 0 until size){
-            result.add(readString())
+            result.add(readByteArray())
+        }
+        return result
+    }
+
+    fun readStringLongMap(): HashMap<String, Long> {
+        val size = readVarInt()
+        val result = hashMapOf<String, Long>()
+        for (i in 0 until size){
+            val key = readString()
+            val value = readVarLong()
+            result[key] = value
         }
         return result
     }

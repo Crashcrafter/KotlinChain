@@ -1,16 +1,19 @@
 package dev.crash.node
 
 import dev.crash.chain.*
+import dev.crash.storage.AddressTrie
 import dev.crash.storage.BlockTrie
+import kotlin.random.Random
+import kotlin.random.nextLong
 
 object Mempool {
     var currentBlock: Block? = null
     val onHold = mutableListOf<Transaction>()
-    val tempAddressState = hashMapOf<String, AddressState>()
+    val tempAddressState = hashMapOf<ByteArray, AddressState>()
 
     fun addTransaction(item: Transaction): Boolean {
         onHold.forEach {
-            if(it.txid == item.txid) return false
+            if(it.txid.contentEquals(item.txid)) return false
         }
         onHold.add(item)
         return true
@@ -23,14 +26,19 @@ object Mempool {
         onHold.removeAll(nextTx)
         for(i in 0 until 100) {
             val address = Address.generate()
-            address.createTransaction(TransactionOutput("23d4fa575b21ad1dd2db14547a26f24845a8f96843f493569875197d", 1000))
+            address.createTransaction(TransactionOutput("ea1cd0569aa4dcd90f0103219420317d051e55663f488df3", Random.nextLong(0..Long.MAX_VALUE)))
         }
     }
 
     fun calculateBlock(): Boolean {
         val result = currentBlock!!.validate()
         if(result) BlockTrie.addBlock(currentBlock!!)
-        tempAddressState.clear()
+        val tempAddressStatesToSave = mutableListOf<AddressState>()
+        tempAddressStatesToSave.addAll(tempAddressState.values)
+        tempAddressStatesToSave.forEach {
+            tempAddressState.remove(it.address)
+        }
+        AddressTrie.saveAddressStates(tempAddressStatesToSave)
         return result
     }
 

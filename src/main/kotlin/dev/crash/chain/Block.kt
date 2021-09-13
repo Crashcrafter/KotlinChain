@@ -5,12 +5,13 @@ import dev.crash.BytePacket
 import dev.crash.crypto.sha224
 import dev.crash.crypto.toHexString
 import dev.crash.storage.BlockTrie
+import dev.crash.toHexStringList
 
 class Block private constructor() {
 
     constructor(transactions: List<Transaction>, blockNonce: Long) : this() {
         this.transactions = transactions
-        val txids = mutableListOf<String>()
+        val txids = mutableListOf<ByteArray>()
         transactions.forEach {
             txids.add(it.txid)
         }
@@ -24,14 +25,12 @@ class Block private constructor() {
         blockHash = blockBytes.sha224()
         val bytePacket = BytePacket(bytes)
         blockNonce = bytePacket.readVarLong() + 1
-        bytePacket.readByteArray()
-        val amountTx = bytePacket.readVarInt()
-        this.txids = bytePacket.readStrings()
+        previousBlockHash = bytePacket.readByteArray()
+        txids = bytePacket.readByteArrays()
         if(buildTxs) {
             val transactions = mutableListOf<Transaction>()
-            for (i in 0 until amountTx) {
-                val value = bytePacket.readString()
-                transactions.add(Transaction.fromTxId(value)!!)
+            txids.forEach {
+                transactions.add(Transaction.fromTxId(it.toHexString())!!)
             }
             this.transactions = transactions
         }
@@ -41,18 +40,20 @@ class Block private constructor() {
 
     var blockNonce: Long = -1
     var transactions: List<Transaction> = listOf()
-    var txids: List<String> = listOf()
+    var txids: List<ByteArray> = listOf()
     var isConfirmed = false
     var confirmations: Long = 0
     var blockBytes = byteArrayOf()
     var blockHash = byteArrayOf()
+    var previousBlockHash = byteArrayOf()
 
     fun validate(): Boolean {
         if(blockNonce < 0) return false
         val bytePacket = BytePacket()
         bytePacket.writeAsVarLong(BlockTrie.lastBlockNonce)
         bytePacket.write(BlockTrie.lastBlockHash)
-        val txids = mutableListOf<String>()
+        previousBlockHash = BlockTrie.lastBlockHash
+        val txids = mutableListOf<ByteArray>()
         transactions.forEach {
             if(!it.validate(blockNonce)) return false
             txids.add(it.txid)
@@ -74,7 +75,7 @@ class Block private constructor() {
         val txids: List<String>
     )
 
-    fun getJsonObj(): JsonObj = JsonObj(blockHash.toHexString(), blockNonce, confirmations, txids)
+    fun getJsonObj(): JsonObj = JsonObj(blockHash.toHexString(), blockNonce, confirmations, txids.toHexStringList())
 
     override fun toString(): String {
         return jacksonObjectMapper().writeValueAsString(getJsonObj())
