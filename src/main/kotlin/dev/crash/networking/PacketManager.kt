@@ -2,13 +2,18 @@ package dev.crash.networking
 
 import dev.crash.BytePacket
 import dev.crash.networking.p2p.P2PChannel
-import dev.crash.networking.packethandler.AuthenticationPacketHandler
-import dev.crash.networking.packethandler.FinishAuthPacketHandler
-import dev.crash.networking.packethandler.SharePeersPacketHandler
+import org.reflections.Reflections
+import kotlin.collections.HashMap
 
 object PacketManager {
-    val packets: HashMap<Int, PacketHandler> = hashMapOf(0 to AuthenticationPacketHandler(), 1 to FinishAuthPacketHandler(), 2 to SharePeersPacketHandler())
+    val packets: HashMap<Int, PacketHandler> = hashMapOf()
     val authCodes: HashMap<P2PChannel, ByteArray> = hashMapOf()
+
+    init {
+        Reflections("dev.crash.networking.handler").getSubTypesOf(PacketHandler::class.java).forEach {
+            it.getDeclaredConstructor().newInstance()
+        }
+    }
 
     fun handlePacket(channel: P2PChannel, bytes: ByteArray) {
         val packet = BytePacket(bytes)

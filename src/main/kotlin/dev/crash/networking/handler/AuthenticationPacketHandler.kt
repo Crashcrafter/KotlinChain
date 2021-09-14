@@ -1,4 +1,4 @@
-package dev.crash.networking.packethandler
+package dev.crash.networking.handler
 
 import dev.crash.BytePacket
 import dev.crash.CONFIG

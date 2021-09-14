@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 object KotlinNode {
-    lateinit var nodeAddress: Address
+    var nodeAddress: Address
 
     fun start(){
         println("Starting node with wallet ${nodeAddress.address}")
@@ -25,7 +25,7 @@ object KotlinNode {
         }
     }
 
-    fun loadNodeWallet(){
+    init {
         val addressFile = File("node.wallet")
         if(addressFile.exists()){
             nodeAddress = Address.fromFile(addressFile)

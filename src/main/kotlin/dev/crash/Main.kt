@@ -15,7 +15,6 @@ fun mainStart(blockChainServerPort: Int = 8334, rpcServerPort: Int = 80, chainId
     CONFIG.CHAINID = chainId
     CONFIG.BLOCKCHAINSERVERPORT = blockChainServerPort
     CONFIG.RPCSERVERPORT = rpcServerPort
-    KotlinNode.loadNodeWallet()
     BlockChainServer.start(blockChainServerPort)
     WebServer.start(rpcServerPort)
     KotlinNode.start()
