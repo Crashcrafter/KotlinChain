@@ -18,6 +18,7 @@ dependencies {
     implementation("org.bouncycastle:bcprov-jdk15to18:1.69")
     implementation("io.ktor:ktor-server-core:1.6.3")
     implementation("io.ktor:ktor-server-netty:1.6.3")
+    implementation("io.ktor:ktor-html-builder:1.6.3")
     implementation("org.slf4j:slf4j-api:1.8.0-beta4")
     implementation("org.slf4j:slf4j-simple:1.8.0-beta4")
     implementation("org.kodein.db:kodein-leveldb-jvm:0.9.0-beta")

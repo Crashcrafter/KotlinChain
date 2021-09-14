@@ -10,9 +10,9 @@ import dev.crash.node.KotlinNode
 class FinishAuthPacket(val hash: ByteArray) : Packet(PacketType.FINISH_AUTH) {
     override fun createPacket(): BytePacket {
         val packet = BytePacket()
-        packet.write(hash.sha256())
-        packet.write(KotlinNode.nodeAddress.address)
-        packet.writeAsVarInt(CONFIG.CHAINID)
+        packet.write(hash.sha256()) // Hash
+        packet.write(KotlinNode.nodeAddress.address) // Node address
+        packet.writeAsVarInt(CONFIG.CHAINID) // Chain ID
         return packet
     }
 }

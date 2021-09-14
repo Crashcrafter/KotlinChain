@@ -14,8 +14,8 @@ class AuthenticationPacket(private val channel: P2PChannel) : Packet(PacketType.
     override fun createPacket(): BytePacket {
         val packet = BytePacket()
         packet.write("KotlinChainFullNode") // Payload
-        packet.write(0) // Version
-        packet.write(1) // ChainId
+        packet.writeAsVarInt(0) // Version
+        packet.writeAsVarInt(1) // ChainId
         packet.write(KotlinNode.nodeAddress.address) // Node Address
         val hash = Random.nextLong().toByteArray().sha256()
         authCodes[channel] = hash.sha256()
