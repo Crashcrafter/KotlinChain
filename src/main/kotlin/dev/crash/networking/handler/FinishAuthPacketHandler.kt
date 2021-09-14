@@ -12,7 +12,7 @@ import io.ktor.util.network.*
 class FinishAuthPacketHandler : PacketHandler(PacketType.FINISH_AUTH) {
     override fun handle(channel: P2PChannel, packet: BytePacket) {
         val hash = packet.readByteArray()
-        val otherNodeAddress = packet.readString()
+        val otherNodeAddress = packet.readByteArray()
         val chainId = packet.readVarInt()
         if(!hash.contentEquals(authCodes[channel])){
             channel.close()

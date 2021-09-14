@@ -6,15 +6,13 @@ import dev.crash.storage.saveDBs
 import dev.crash.webserver.WebServer
 import kotlin.system.exitProcess
 
-fun main(args: Array<String>){
+fun main(){
     mainStart()
 }
 
 fun mainStart(blockChainServerPort: Int = 8334, rpcServerPort: Int = 80, chainId: Int = 1){
     println("Starting KotlinChain Node...")
-    CONFIG.CHAINID = chainId
-    CONFIG.BLOCKCHAINSERVERPORT = blockChainServerPort
-    CONFIG.RPCSERVERPORT = rpcServerPort
+    CONFIG.setParams(chainId = chainId, blockchainServerPort = blockChainServerPort, rpcServerPort = rpcServerPort)
     BlockChainServer.start(blockChainServerPort)
     WebServer.start(rpcServerPort)
     KotlinNode.start()

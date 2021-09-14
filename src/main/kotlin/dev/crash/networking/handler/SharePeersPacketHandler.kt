@@ -13,7 +13,7 @@ class SharePeersPacketHandler : PacketHandler(PacketType.SHARE_PEERS) {
         for(i in 0 until size) {
             val ip = packet.readString()
             val port = packet.readVarInt()
-            val nodeAddress = packet.readString()
+            val nodeAddress = packet.readByteArray()
             val chainId = packet.readVarInt()
             val peer = Peer(ip, port, nodeAddress, chainId)
             if(!PeerHandler.hasPeer(peer)){

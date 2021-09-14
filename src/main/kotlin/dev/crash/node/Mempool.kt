@@ -26,13 +26,14 @@ object Mempool {
         onHold.removeAll(nextTx)
         for(i in 0 until 100) {
             val address = Address.generate()
-            address.createTransaction(TransactionOutput("ea1cd0569aa4dcd90f0103219420317d051e55663f488df3", Random.nextLong(0..Long.MAX_VALUE)))
+            address.createTransaction(TransactionOutput(KotlinNode.nodeAddress.address, Random.nextLong(0..Long.MAX_VALUE)))
         }
     }
 
     fun calculateBlock(): Boolean {
         val result = currentBlock!!.validate()
-        if(result) BlockTrie.addBlock(currentBlock!!)
+        if(!result) return result
+        BlockTrie.addBlock(currentBlock!!)
         val tempAddressStatesToSave = mutableListOf<AddressState>()
         tempAddressStatesToSave.addAll(tempAddressState.values)
         tempAddressStatesToSave.forEach {

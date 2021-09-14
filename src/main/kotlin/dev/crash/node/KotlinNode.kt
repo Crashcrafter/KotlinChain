@@ -1,6 +1,7 @@
 package dev.crash.node
 
 import dev.crash.chain.Address
+import dev.crash.crypto.toHexString
 import dev.crash.storage.BlockTrie
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.GlobalScope
@@ -11,7 +12,7 @@ object KotlinNode {
     var nodeAddress: Address
 
     fun start(){
-        println("Starting node with wallet ${nodeAddress.address}")
+        println("Starting node with wallet ${nodeAddress.getAddressString()}")
         BlockTrie.loadLastBlocks()
         GlobalScope.launch {
             while (true) {

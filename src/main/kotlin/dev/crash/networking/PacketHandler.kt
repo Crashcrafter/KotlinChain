@@ -7,6 +7,7 @@ abstract class PacketHandler(val packetType: PacketType) {
     abstract fun handle(channel: P2PChannel, packet: BytePacket)
 
     init {
+        @Suppress("LeakingThis")
         PacketManager.packets[packetType.packetId] = this
     }
 }

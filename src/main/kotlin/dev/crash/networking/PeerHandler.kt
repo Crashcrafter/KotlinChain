@@ -20,7 +20,7 @@ object PeerHandler {
         for (i in 0 until size) {
             val ip = packet.readString()
             val port = packet.readVarInt()
-            val address = packet.readString()
+            val address = packet.readByteArray()
             val chainId = packet.readVarInt()
             var exists = false
             peers.forEach {
@@ -41,11 +41,11 @@ object PeerHandler {
         save()
     }
 
-    fun addPeer(ip: String, port: Int, address: String, chainId: Int) = addPeer(Peer(ip, port, address, chainId))
+    fun addPeer(ip: String, port: Int, address: ByteArray, chainId: Int) = addPeer(Peer(ip, port, address, chainId))
 
     fun hasPeer(peer: Peer): Boolean {
         peers.forEach {
-            if(it.ip == peer.ip && it.nodeAddress == peer.nodeAddress && it.chainId == peer.chainId) return true
+            if(it.ip == peer.ip && it.nodeAddress.contentEquals(peer.nodeAddress) && it.chainId == peer.chainId) return true
         }
         return false
     }

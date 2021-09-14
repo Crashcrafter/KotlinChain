@@ -10,7 +10,7 @@ import java.lang.IllegalArgumentException
 import java.math.BigInteger
 import java.nio.file.Path
 
-class Address constructor(val publicKey: ByteArray, val address: String, val privateKey: BigInteger) {
+class Address constructor(val publicKey: ByteArray, val address: ByteArray, val privateKey: BigInteger) {
     fun saveToFile(path: String) = saveToFile(File(path))
 
     fun saveToFile(path: Path) = saveToFile(path.toFile())
@@ -50,13 +50,15 @@ class Address constructor(val publicKey: ByteArray, val address: String, val pri
 
     fun getState(): AddressState = AddressTrie.getAddress(address)
 
+    fun getAddressString(): String = "0x${address.toHexString()}"
+
     companion object {
         fun generate(): Address {
             return try {
                 val keyPair = genECDSAKeyPair()
                 val privateKey = keyPair.private.getPrivateKeyBigInt()
                 val publicKey = keyPair.public.getUncompressedPublicKeyBytes()
-                val address = "0x${publicKey.publicKeyToAddress().toHexString()}"
+                val address = publicKey.publicKeyToAddress()
                 Address(publicKey, address, privateKey)
             }catch (ex: IllegalArgumentException){
                 generate()
@@ -71,7 +73,7 @@ class Address constructor(val publicKey: ByteArray, val address: String, val pri
             val bytes = file.readBytes()
             val bytePacket = BytePacket(bytes)
             val publicKey = bytePacket.readByteArray()
-            val address = bytePacket.readString()
+            val address = bytePacket.readByteArray()
             val privateKey = bytePacket.readBigInt()
             return Address(publicKey, address, privateKey)
         }
