@@ -1,6 +1,7 @@
 package dev.crash.networking.handler
 
 import dev.crash.BytePacket
+import dev.crash.CONFIG
 import dev.crash.networking.PacketHandler
 import dev.crash.networking.PacketManager.authCodes
 import dev.crash.networking.PacketType
@@ -20,7 +21,7 @@ class FinishAuthPacketHandler : PacketHandler(PacketType.FINISH_AUTH) {
         }
         val remoteAddress = channel.socket.remoteAddress
         println("Finished auth with $remoteAddress")
-        if(remoteAddress.port == 8334) return
+        if(remoteAddress.hostname == "127.0.0.1" && remoteAddress.port == CONFIG.BLOCKCHAINSERVERPORT) return
         SharePeersPacket().send(channel)
         PeerHandler.addPeer(remoteAddress.hostname, remoteAddress.port, otherNodeAddress, chainId)
     }

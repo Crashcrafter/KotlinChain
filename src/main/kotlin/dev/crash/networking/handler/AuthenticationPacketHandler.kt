@@ -11,13 +11,15 @@ class AuthenticationPacketHandler : PacketHandler(PacketType.AUTHENTICATION) {
     override fun handle(channel: P2PChannel, packet: BytePacket) {
         val msg = packet.readString()
         val version = packet.readVarInt()
-        val chainId = packet.readVarInt()
-        val nodeAddress = packet.readString()
-        val hash = packet.readByteArray()
-        if(msg != "KotlinChainFullNode" || version != CONFIG.VERSION || chainId != CONFIG.CHAINID){
+        if(msg != "KotlinChainFullNode" || version != CONFIG.VERSION){
             channel.close()
             return
         }
+        val chainId = packet.readVarInt()
+        val nodeAddress = packet.readString()
+        val hash = packet.readByteArray()
+        channel.writeCache("address", nodeAddress)
+        channel.writeCache("chain_id", chainId)
         FinishAuthPacket(hash).send(channel)
     }
 }

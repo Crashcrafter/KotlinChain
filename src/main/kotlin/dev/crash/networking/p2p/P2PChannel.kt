@@ -9,6 +9,7 @@ class P2PChannel(val socket: Socket, val handler: P2PHandler) {
 
     val input = socket.openReadChannel()
     val output = socket.openWriteChannel(autoFlush = true)
+    val cache = hashMapOf<String, Any>()
 
     fun open(){
         runBlocking {
@@ -29,4 +30,8 @@ class P2PChannel(val socket: Socket, val handler: P2PHandler) {
     fun sendPacket(bytePacket: BytePacket) = sendBytes(bytePacket.toByteArray())
 
     fun close() = socket.close()
+
+    fun writeCache(key: String, value: Any) = cache.set(key, value)
+
+    inline fun <reified T> getCache(key: String): T = cache[key] as T
 }

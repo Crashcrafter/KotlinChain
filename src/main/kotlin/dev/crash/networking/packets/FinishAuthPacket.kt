@@ -7,7 +7,7 @@ import dev.crash.networking.Packet
 import dev.crash.networking.PacketType
 import dev.crash.node.KotlinNode
 
-class FinishAuthPacket(val hash: ByteArray) : Packet(PacketType.FINISH_AUTH) {
+class FinishAuthPacket(private val hash: ByteArray) : Packet(PacketType.FINISH_AUTH) {
     override fun createPacket(): BytePacket {
         val packet = BytePacket()
         packet.write(hash.sha256()) // Hash
