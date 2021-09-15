@@ -1,4 +1,4 @@
-package dev.crash.webserver.rpc
+package dev.crash.webserver.api
 
 import dev.crash.chain.Transaction
 import dev.crash.webserver.getGetParam

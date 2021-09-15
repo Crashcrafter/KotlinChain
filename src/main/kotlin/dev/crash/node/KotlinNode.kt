@@ -1,18 +1,22 @@
 package dev.crash.node
 
 import dev.crash.chain.Address
-import dev.crash.crypto.toHexString
+import dev.crash.chain.TransactionOutput
 import dev.crash.storage.BlockTrie
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.random.Random
+import kotlin.random.nextLong
 
 object KotlinNode {
     var nodeAddress: Address
 
     fun start(){
         println("Starting node with wallet ${nodeAddress.getAddressString()}")
+        val address = Address.generate()
+        address.createTransaction(TransactionOutput(nodeAddress.address, Random.nextLong(0..Long.MAX_VALUE)))
         BlockTrie.loadLastBlocks()
         GlobalScope.launch {
             while (true) {

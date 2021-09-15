@@ -1,4 +1,4 @@
-package dev.crash.webserver.rpc
+package dev.crash.webserver.api
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dev.crash.chain.Transaction

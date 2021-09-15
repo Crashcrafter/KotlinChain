@@ -7,10 +7,14 @@ import io.netty.channel.Channel
 abstract class Packet(val packetType: PacketType) {
     abstract fun createPacket(): BytePacket
 
-    fun send(channel: P2PChannel){
+    fun createPacketWithId(): BytePacket {
         val packet = BytePacket()
         packet.writeAsVarInt(packetType.packetId)
         packet.write(createPacket())
-        channel.sendPacket(packet)
+        return packet
+    }
+
+    fun send(channel: P2PChannel){
+        channel.sendPacket(createPacketWithId())
     }
 }

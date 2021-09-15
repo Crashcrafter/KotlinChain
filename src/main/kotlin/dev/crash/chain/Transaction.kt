@@ -43,9 +43,9 @@ class Transaction private constructor() {
             outputs.add(TransactionOutput(recipient, amount, data))
         }
         val v = bytePacket.readVarInt()
-        val recIdCalc = v - 2*CONFIG.CHAINID
-        if(confirm && recIdCalc !in 0..1) throw ECDSAValidationException("v is invalid")
-        recid = recIdCalc.toByte()
+        val recId = v - 2*CONFIG.CHAINID
+        if(confirm && recId !in 0..1) throw ECDSAValidationException("v is invalid")
+        recid = recId.toByte()
         r = BigInteger(bytePacket.readByteArray())
         s = BigInteger(bytePacket.readByteArray())
         if(confirm) validateSendTx()

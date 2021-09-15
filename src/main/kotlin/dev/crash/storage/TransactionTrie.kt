@@ -26,10 +26,12 @@ object TransactionTrie : Trie("transactions") {
         batch.close()
     }
 
-    fun getTransaction(txHash: String): Transaction? {
-        val alloc = db.get(txHash.asHexByteArray().toMemory()) ?: return null
+    fun getTransaction(txHash: ByteArray): Transaction? {
+        val alloc = db.get(txHash.toMemory()) ?: return null
         val result = Transaction.fromDBBytes(alloc.getBytes())
         alloc.close()
         return result
     }
+
+    fun getTransaction(txHash: String): Transaction? = getTransaction(txHash.asHexByteArray())
 }

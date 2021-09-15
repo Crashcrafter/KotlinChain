@@ -1,4 +1,4 @@
-package dev.crash.webserver.rpc
+package dev.crash.webserver.api
 
 import dev.crash.storage.AddressTrie
 import dev.crash.webserver.getAddress

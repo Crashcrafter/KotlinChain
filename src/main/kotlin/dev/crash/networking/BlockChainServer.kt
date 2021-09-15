@@ -8,6 +8,7 @@ import dev.crash.networking.packets.AuthenticationPacket
 
 object BlockChainServer {
     val clients = mutableListOf<P2PClient>()
+    lateinit var server: P2PServer
 
     fun start(port: Int) {
         println("Starting Blockchain TCP server on port $port...")
@@ -16,7 +17,7 @@ object BlockChainServer {
                 AuthenticationPacket(channel).send(channel)
             }
         }
-        P2PServer("127.0.0.1", port, msgHandler)
+        server = P2PServer("127.0.0.1", port, msgHandler)
         PeerHandler.loadPeers()
         PeerHandler.peers.forEach {
             val client = P2PClient(it.ip, it.port, msgHandler)

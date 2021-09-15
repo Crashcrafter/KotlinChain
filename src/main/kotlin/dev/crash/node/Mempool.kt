@@ -3,6 +3,7 @@ package dev.crash.node
 import dev.crash.chain.*
 import dev.crash.storage.AddressTrie
 import dev.crash.storage.BlockTrie
+import dev.crash.storage.TransactionTrie
 import kotlin.random.Random
 import kotlin.random.nextLong
 
@@ -12,9 +13,7 @@ object Mempool {
     val tempAddressState = hashMapOf<ByteArray, AddressState>()
 
     fun addTransaction(item: Transaction): Boolean {
-        onHold.forEach {
-            if(it.txid.contentEquals(item.txid)) return false
-        }
+        if(onHold.any { it.txid.contentEquals(item.txid) } || TransactionTrie.getTransaction(item.txid) != null) return false
         onHold.add(item)
         return true
     }

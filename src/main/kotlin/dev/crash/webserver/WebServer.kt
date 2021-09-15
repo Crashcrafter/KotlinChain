@@ -1,8 +1,8 @@
 package dev.crash.webserver
 
 import dev.crash.webserver.explorer.*
-import dev.crash.webserver.rpc.*
-import dev.crash.webserver.rpc.getAddress
+import dev.crash.webserver.api.*
+import dev.crash.webserver.api.getAddress
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
@@ -16,6 +16,7 @@ object WebServer {
         embeddedServer(Netty, port = port) {
             routing {
                 route("/api") {
+                    get("/") { getStatus() }
                     get("/getBalance") { getBalance() }
                     get("/getAddress") { getAddress() }
                     get("/getTx") { getTransaction() }
@@ -36,6 +37,8 @@ object WebServer {
                 get("/address") { addressPage() }
                 get("/tx") { transactionPage() }
                 get("/txs") { lastTransactionsPage() }
+
+                get("{...}") { call.respond(HttpStatusCode.NotFound, call.request.local.uri) }
             }
         }.start()
         println("RPC server started!")
