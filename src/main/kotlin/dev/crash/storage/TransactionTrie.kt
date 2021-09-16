@@ -44,10 +44,10 @@ object TransactionTrie : Trie("transactions") {
         val cursor = db.newCursor()
         cursor.seekToFirst()
         while (cursor.isValid()){
-            val txhash = cursor.transientKey().getBytes()
+            val txid = cursor.transientKey().getBytes()
             val txBytes = BytePacket(cursor.transientValue().getBytes()).readByteArray()
-            if(!txhash.contentEquals(txBytes.sha256())){
-                throw ChainStorageException("Invalid transaction ${txhash.toHexString()}")
+            if(!txid.contentEquals(txBytes.sha256())){
+                throw ChainStorageException("Invalid transaction ${txid.toHexString()}")
             }
             cursor.next()
         }
