@@ -26,6 +26,7 @@ dependencies {
     implementation("org.kodein.db:kodein-leveldb-jni-jvm-macos:0.9.0-beta")
     implementation("org.kodein.db:kodein-leveldb-jni-jvm-linux:0.9.0-beta")
     implementation("org.reflections:reflections:0.9.12")
+    implementation("org.ow2.asm:asm:9.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.30")
 }
 
