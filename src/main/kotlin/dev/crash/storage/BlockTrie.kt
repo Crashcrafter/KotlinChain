@@ -3,6 +3,7 @@ package dev.crash.storage
 import dev.crash.BytePacket
 import dev.crash.chain.Block
 import dev.crash.crypto.sha224
+import dev.crash.exceptions.ChainStorageException
 import dev.crash.toByteArrayAsVarLong
 import dev.crash.toMemory
 import org.kodein.memory.io.getBytes
@@ -44,5 +45,26 @@ object BlockTrie : Trie("blocks") {
         val bytes = alloc.getBytes()
         alloc.close()
         return Block(bytes)
+    }
+
+    fun verifyBlocks() {
+        println("Verify blocks...")
+        val cursor = db.newCursor()
+        cursor.seekToLast()
+        var lastBlockHash = this.lastBlockHash
+        var lastNonce = this.lastBlockNonce
+        while (cursor.isValid()){
+            val bytes = cursor.transientValue().getBytes()
+            val packet = BytePacket(bytes)
+            val nonce = packet.readVarLong() //Last nonce
+            if(!bytes.sha224().contentEquals(lastBlockHash) && nonce != lastNonce-1){
+                throw ChainStorageException("Invalid block $nonce!")
+            }
+            lastNonce = nonce
+            lastBlockHash = packet.readByteArray()
+            cursor.seekTo(nonce.toByteArrayAsVarLong().toMemory()) //Get Previous block
+        }
+        cursor.close()
+        println("Blocks verified!")
     }
 }

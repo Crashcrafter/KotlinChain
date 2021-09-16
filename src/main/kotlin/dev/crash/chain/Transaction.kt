@@ -135,6 +135,16 @@ class Transaction private constructor() {
         return jacksonObjectMapper().writeValueAsString(getJsonObj())
     }
 
+    fun getTotalOut(): Long {
+        var totalOut = 0L
+        outputs.forEach {
+            totalOut += it.amount
+        }
+        return totalOut
+    }
+
+    fun getOutputOfAddress(address: ByteArray): List<TransactionOutput> = outputs.filter { it.recipient.contentEquals(address) }
+
     companion object {
         fun fromDBBytes(bytes: ByteArray): Transaction {
             val bytePacket = BytePacket(bytes)

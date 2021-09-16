@@ -3,6 +3,7 @@ package dev.crash.node
 import dev.crash.chain.Address
 import dev.crash.chain.TransactionOutput
 import dev.crash.storage.BlockTrie
+import dev.crash.storage.TransactionTrie
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -15,9 +16,12 @@ object KotlinNode {
 
     fun start(){
         println("Starting node with wallet ${nodeAddress.getAddressString()}")
+        BlockTrie.loadLastBlocks()
+        BlockTrie.verifyBlocks()
+        TransactionTrie.verifyTransactions()
+        //AddressTrie.verifyAddressStates() Too long calc
         val address = Address.generate()
         address.createTransaction(TransactionOutput(nodeAddress.address, Random.nextLong(0..Long.MAX_VALUE)))
-        BlockTrie.loadLastBlocks()
         GlobalScope.launch {
             while (true) {
                 if(Mempool.isReadyForNewBlock()){

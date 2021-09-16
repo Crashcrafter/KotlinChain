@@ -1,7 +1,11 @@
 package dev.crash.storage
 
+import dev.crash.BytePacket
 import dev.crash.chain.Transaction
 import dev.crash.crypto.asHexByteArray
+import dev.crash.crypto.sha256
+import dev.crash.crypto.toHexString
+import dev.crash.exceptions.ChainStorageException
 import dev.crash.toMemory
 import org.kodein.memory.io.getBytes
 import kotlin.collections.ArrayDeque
@@ -34,4 +38,20 @@ object TransactionTrie : Trie("transactions") {
     }
 
     fun getTransaction(txHash: String): Transaction? = getTransaction(txHash.asHexByteArray())
+
+    fun verifyTransactions() {
+        println("Verify transactions...")
+        val cursor = db.newCursor()
+        cursor.seekToFirst()
+        while (cursor.isValid()){
+            val txhash = cursor.transientKey().getBytes()
+            val txBytes = BytePacket(cursor.transientValue().getBytes()).readByteArray()
+            if(!txhash.contentEquals(txBytes.sha256())){
+                throw ChainStorageException("Invalid transaction ${txhash.toHexString()}")
+            }
+            cursor.next()
+        }
+        cursor.close()
+        println("Transactions verified!")
+    }
 }
